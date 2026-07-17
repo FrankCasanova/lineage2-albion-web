@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fadeUp, stagger } from '../lib/motion'
+import { API_BASE } from '../lib/api'
 
 const OPTIONS = [
   
@@ -18,7 +19,7 @@ const OPTIONS = [
     title: '2. Download Launcher',
     description:
       'Our lightweight launcher keeps the game patched and up to date automatically. Recommended for most players.',
-    href: '/api/download/launcher',
+    href: API_BASE + '/api/download/launcher',
     download: true,
     external: false,
     primary: true,
@@ -31,7 +32,7 @@ export default function Download() {
 
   const handleDownloadClient = (e) => {
     e.preventDefault()
-    const audio = new Audio('/web-download.mp3')
+    const audio = new Audio(`${import.meta.env.BASE_URL}web-download.mp3`)
     audio.play()
     setShowModal(true)
     window.open('https://download1351.mediafire.com/gspmtexga67gIqZ6eVv-oGwR5MsNlFggeUkFknB1dAu-9cRtO-_14m8sL6xbdvn7H2iv1-KhBkadWBXVNJgMjX3xypF6oFGH-sm3-N6l1ql0Yh5CMJUf3xNzc8iG70UtkVxLBlEQfCnRXmx4VrqwWyuEemzJMl_l1GiUqbyfv2jh/nuu5qgqo2ie76ms/L2_Albion.7z', '_blank', 'noopener,noreferrer')

@@ -12,7 +12,7 @@ export default function Lobby() {
   }, [navigate])
 
   const handleEnter = () => {
-    const audio = new Audio('/web-intro.mp3')
+    const audio = new Audio(`${import.meta.env.BASE_URL}web-intro.mp3`)
     audio.play()
     sessionStorage.setItem('l2a_seen', '1')
     navigate('/home')

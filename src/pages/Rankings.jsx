@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fadeUp, stagger, transition } from '../lib/motion'
+import { API_BASE } from '../lib/api'
 
 const SORT_OPTIONS = [
   { key: 'level', label: 'Level' },
@@ -15,7 +16,7 @@ export default function Rankings() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/rankings?sort=${sort}`)
+    fetch(`${API_BASE}/api/rankings?sort=${sort}`)
       .then((res) => res.json())
       .then((data) => setRankings(data.rankings || []))
       .catch(() => setRankings([]))
