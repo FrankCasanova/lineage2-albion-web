@@ -2,13 +2,15 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
+const BASE = import.meta.env.BASE_URL
+
 const DESKTOP_LAYERS = [
-  { src: '/layer6.jpg', depth: 0.0, backgroundSize: '100% auto', backgroundPosition: 'center top', zIndex: 0 },
-  { src: '/layer5.png', depth: 0.1, backgroundSize: '320% auto', backgroundPosition: 'center top', zIndex: 1, opacity: 0.8 },
-  { src: '/layer4.png', depth: 0.2, backgroundSize: '50% auto', backgroundPosition: 'center bottom', zIndex: 2 },
-  { src: '/layer3.png', depth: 0.4, backgroundSize: '100% auto', backgroundPosition: 'center calc(100% - 30px)', zIndex: 3 },
-  { src: '/layer2.png', depth: 0.7, backgroundSize: 'auto 40%', backgroundPosition: 'right calc(100% - 50px)', zIndex: 4 },
-  { src: '/layer1.png', depth: 1.0, backgroundSize: '100%', backgroundPosition: 'center calc(100% - 29px)', zIndex: 30 },
+  { src: `${BASE}layer6.jpg`, depth: 0.0, backgroundSize: '100% auto', backgroundPosition: 'center top', zIndex: 0 },
+  { src: `${BASE}layer5.png`, depth: 0.1, backgroundSize: '320% auto', backgroundPosition: 'center top', zIndex: 1, opacity: 0.8 },
+  { src: `${BASE}layer4.png`, depth: 0.2, backgroundSize: '50% auto', backgroundPosition: 'center bottom', zIndex: 2 },
+  { src: `${BASE}layer3.png`, depth: 0.4, backgroundSize: '100% auto', backgroundPosition: 'center calc(100% - 30px)', zIndex: 3 },
+  { src: `${BASE}layer2.png`, depth: 0.7, backgroundSize: 'auto 40%', backgroundPosition: 'right calc(100% - 50px)', zIndex: 4 },
+  { src: `${BASE}layer1.png`, depth: 1.0, backgroundSize: '100%', backgroundPosition: 'center calc(100% - 29px)', zIndex: 30 },
 ]
 
 // ponytail: mobile depths halved for subtler parallax on short viewports

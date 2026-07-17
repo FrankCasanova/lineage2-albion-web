@@ -10,12 +10,12 @@ export default function Logo() {
     >
       <div className="relative inline-block">
         <img
-          src="/logo-emblem.webp"
+          src={`${import.meta.env.BASE_URL}logo-emblem.webp`}
           alt="Lineage 2 emblem"
           className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[40rem] lg:h-[40rem] object-contain drop-shadow-lg"
         />
         <motion.img
-          src="/albion-logo.png"
+          src={`${import.meta.env.BASE_URL}albion-logo.png`}
           alt="Albion logo"
           className="absolute left-1/2 -translate-x-1/2 bottom-[28%] w-28 sm:w-40 md:w-52 lg:w-72 object-contain drop-shadow-lg"
           initial={{ opacity: 0, scale: 0.85 }}

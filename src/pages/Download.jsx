@@ -145,7 +145,7 @@ export default function Download() {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src="/dancing_cat.gif"
+                src={`${import.meta.env.BASE_URL}dancing_cat.gif`}
                 alt="Dancing cat"
                 className="w-48 h-48 object-contain mx-auto mb-6 rounded-lg"
               />

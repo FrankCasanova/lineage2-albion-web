@@ -25,20 +25,10 @@
 body {
   margin: 0;
   background-color: var(--color-paper-50);
-  background-image: url('/layer6.jpg');
-  background-size: cover;
-  background-position: center top;
-  background-attachment: fixed;
   color: var(--color-ink-900);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (max-width: 768px) {
-  body {
-    background-attachment: scroll;
-  }
 }
 
 #root {

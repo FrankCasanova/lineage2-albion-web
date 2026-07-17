@@ -11,7 +11,7 @@ export default function Hero() {
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
         <img
-          src="/logo-emblem.webp"
+          src={`${import.meta.env.BASE_URL}logo-emblem.webp`}
           alt="Lineage 2 emblem"
           className="w-80 h-80 md:w-96 md:h-96 lg:w-[40rem] lg:h-[40rem] object-contain drop-shadow-lg"
         />
