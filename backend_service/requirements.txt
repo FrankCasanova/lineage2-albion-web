@@ -1,6 +1,6 @@
 fastapi
 uvicorn
 bcrypt
-mariadb
+pymysql
 python-multipart
 PyJWT

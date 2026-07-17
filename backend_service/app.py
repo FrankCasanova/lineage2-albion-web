@@ -6,7 +6,7 @@ import time
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
-import mariadb
+import pymysql
 import jwt
 from fastapi import FastAPI, HTTPException, Depends, Request, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,10 +26,11 @@ DB_CONFIG = {
     "user": os.getenv("DB_USER", "root"),
     "password": os.getenv("DB_PASS", "root"),
     "database": os.getenv("DB_NAME", "acis"),
+    "charset": "utf8mb4",
 }
 
 def get_db():
-    return mariadb.connect(**DB_CONFIG)
+    return pymysql.connect(**DB_CONFIG)
 
 # Item id -> name, loaded once from the datapack XMLs (optional, env-driven).
 # Lets the admin UI show real names instead of raw ids. Empty if not configured.
@@ -173,7 +174,7 @@ def user_is_admin(user_id: int) -> bool:
             (user_id,),
         )
         return cur.fetchone() is not None
-    except mariadb.Error:
+    except pymysql.Error:
         return False
     finally:
         try:
@@ -210,9 +211,9 @@ async def register(req: RegisterRequest):
             (email, hashed.decode(), now_ms(), now_ms()),
         )
         con.commit()
-    except mariadb.IntegrityError:
+    except pymysql.IntegrityError:
         raise HTTPException(status_code=409, detail="Email already registered")
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -231,7 +232,7 @@ async def login(req: LoginRequest):
         cur = con.cursor()
         cur.execute("SELECT id, password FROM portal_users WHERE email = ?", (email,))
         row = cur.fetchone()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -257,7 +258,7 @@ async def me(user_id: int = Depends(get_current_user)):
         cur.execute("SELECT email FROM portal_users WHERE id = ?", (user_id,))
         row = cur.fetchone()
         is_admin = user_is_admin(user_id) if row else False
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -282,7 +283,7 @@ async def list_game_accounts(user_id: int = Depends(get_current_user)):
             (user_id,),
         )
         rows = cur.fetchall()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -326,10 +327,10 @@ async def create_game_account(req: CreateGameAccountRequest, user_id: int = Depe
             (user_id, login, now_ms()),
         )
         con.commit()
-    except mariadb.IntegrityError:
+    except pymysql.IntegrityError:
         con.rollback()
         raise HTTPException(status_code=409, detail="Username already taken")
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -355,7 +356,7 @@ async def delete_game_account(login: str, user_id: int = Depends(get_current_use
         cur.execute("DELETE FROM portal_l2_links WHERE l2_account = ?", (login,))
         cur.execute("DELETE FROM accounts WHERE login = ?", (login,))
         con.commit()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -379,7 +380,7 @@ async def dashboard(user_id: int = Depends(get_current_user)):
             (user_id,),
         )
         rows = cur.fetchall()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -417,7 +418,7 @@ async def rankings(sort: str = Query("level", pattern="^(level|pvp|pk)$")):
             f"SELECT char_name, level, classid, pvpkills, pkkills FROM characters ORDER BY {order} LIMIT 50"
         )
         rows = cur.fetchall()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -446,7 +447,7 @@ async def server_status():
         cur = con.cursor()
         cur.execute("SELECT COUNT(*) FROM characters WHERE online = 1")
         online_count = cur.fetchone()[0]
-    except mariadb.Error:
+    except pymysql.Error:
         online_count = -1
     finally:
         try:
@@ -485,7 +486,7 @@ async def change_password(req: ChangePasswordRequest, user_id: int = Depends(get
             (hashed.decode(), now_ms(), user_id),
         )
         con.commit()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -524,7 +525,7 @@ async def admin_users(
             (limit, offset),
         )
         rows = cur.fetchall()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -577,7 +578,7 @@ async def admin_characters(
             params + (limit, offset),
         )
         rows = cur.fetchall()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -618,7 +619,7 @@ async def admin_user_characters(user_id: int, _: int = Depends(require_admin)):
             (user_id,),
         )
         rows = cur.fetchall()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -651,7 +652,7 @@ async def admin_char_items(obj_id: int, _: int = Depends(require_admin)):
             (obj_id,),
         )
         rows = cur.fetchall()
-    except mariadb.Error:
+    except pymysql.Error:
         raise HTTPException(status_code=500, detail="Database error")
     finally:
         try:
@@ -707,7 +708,7 @@ async def give_item(obj_id: int, req: GiveItemRequest, _: int = Depends(require_
             (obj_id, next_id, req.item_id, req.count, req.enchant_level, req.loc),
         )
         con.commit()
-    except mariadb.Error as e:
+    except pymysql.Error as e:
         try:
             con.rollback()
         except Exception:
@@ -737,7 +738,7 @@ async def delete_item(object_id: int, _: int = Depends(require_admin)):
             raise HTTPException(status_code=409, detail="Owner is online; log them out first")
         cur.execute("DELETE FROM items WHERE object_id = ?", (object_id,))
         con.commit()
-    except mariadb.Error:
+    except pymysql.Error:
         try:
             con.rollback()
         except Exception:
