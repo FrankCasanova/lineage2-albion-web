@@ -16,15 +16,14 @@ def _resolve_updater_dir():
         return os.path.abspath(env)
 
     candidates = [
-        os.path.join(os.path.dirname(__file__), "updater"),
-        os.path.join(os.path.dirname(__file__), "..", "backend_service", "updater"),
-        os.path.join(os.getcwd(), "backend_service", "updater"),
-        os.path.join(os.getcwd(), "updater"),
         os.path.join(os.getcwd(), "api", "updater"),
         os.path.join(os.path.dirname(__file__), "..", "api", "updater"),
+        os.path.join(os.getcwd(), "updater"),
+        os.path.join(os.path.dirname(__file__), "updater"),
+        os.path.join(os.getcwd(), "backend_service", "updater"),
     ]
     for c in candidates:
-        if os.path.isdir(c):
+        if os.path.isfile(os.path.join(c, "files.xml")):
             return os.path.abspath(c)
     return os.path.abspath(candidates[0])
 
