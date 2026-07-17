@@ -18,8 +18,8 @@ export default function Home() {
         <Logo />
       </section>
       
-      {/* Content section */}
-      <section className="relative z-20">
+      {/* Content section — pulled up to peek over hero */}
+      <section className="relative z-20 -mt-64 md:-mt-32">
         <About />
       </section>
     </motion.div>
