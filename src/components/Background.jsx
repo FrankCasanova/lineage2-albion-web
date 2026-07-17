@@ -1,82 +1,198 @@
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
 const BASE = import.meta.env.BASE_URL
 
-const DESKTOP_LAYERS = [
-  { src: `${BASE}layer6.jpg`, depth: 0.0, backgroundSize: '100% auto', backgroundPosition: 'center top', zIndex: 0 },
-  { src: `${BASE}layer5.png`, depth: 0.1, backgroundSize: '320% auto', backgroundPosition: 'center top', zIndex: 1, opacity: 0.8 },
-  { src: `${BASE}layer4.png`, depth: 0.2, backgroundSize: '50% auto', backgroundPosition: 'center bottom', zIndex: 2 },
-  { src: `${BASE}layer3.png`, depth: 0.4, backgroundSize: '100% auto', backgroundPosition: 'center calc(100% - 30px)', zIndex: 3 },
-  { src: `${BASE}layer2.png`, depth: 0.7, backgroundSize: 'auto 40%', backgroundPosition: 'right calc(100% - 50px)', zIndex: 4 },
-  { src: `${BASE}layer1.png`, depth: 1.0, backgroundSize: '100%', backgroundPosition: 'center calc(100% - -1520px)', zIndex: 30 },
-]
-
-// ponytail: mobile depths halved for subtler parallax on short viewports
-const MOBILE_LAYERS = [
-  { ...DESKTOP_LAYERS[0], backgroundSize: '300% auto' },
-  { ...DESKTOP_LAYERS[1]},
-  { ...DESKTOP_LAYERS[2], depth: 0.1, backgroundSize: '110% auto',backgroundPosition: 'center calc(100% - 200px)' },
-  { ...DESKTOP_LAYERS[3], depth: 0.2, backgroundSize: '100% auto',backgroundPosition: 'center calc(100% - 220px)'  },
-  { ...DESKTOP_LAYERS[4], depth: 0.35, backgroundSize: '25% auto',backgroundPosition: 'right calc(100% - 245px)' },
-  { ...DESKTOP_LAYERS[5], depth: 0.5, backgroundSize: '100% auto',backgroundPosition: 'center calc(100% - -100px)'  },
+const LAYERS = [
+  {
+    src: `${BASE}layer6.jpg`,
+    depth: 0.0,
+    zIndex: 0,
+    desktop: {
+      backgroundSize: 'cover',
+      backgroundPosition: 'center top',
+    },
+    mobile: {
+      backgroundSize: 'cover',
+      backgroundPosition: 'center top',
+    },
+  },
+  {
+    src: `${BASE}layer5.png`,
+    depth: 0.08,
+    zIndex: 1,
+    opacity: 0.8,
+    desktop: {
+      backgroundSize: '100% auto',
+      backgroundPosition: 'center top',
+    },
+    mobile: {
+      backgroundSize: '290% auto',
+      backgroundPosition: 'center top',
+    },
+  },
+  {
+    src: `${BASE}layer4.png`,
+    depth: 0.16,
+    zIndex: 2,
+    desktop: {
+      backgroundSize: '100% auto',
+      backgroundPosition: 'center calc(100% - 1vh)',
+    },
+    mobile: {
+      backgroundSize: '140% auto',
+      backgroundPosition: 'center calc(100% - 10vh)',
+    },
+  },
+  {
+    src: `${BASE}layer3.png`,
+    depth: 0.28,
+    zIndex: 3,
+    desktop: {
+      backgroundSize: '100% auto',
+      backgroundPosition: 'center calc(100% - 3vh)',
+    },
+    mobile: {
+      backgroundSize: '150% auto',
+      backgroundPosition: 'center calc(100% - 15vh)',
+    },
+  },
+  {
+    src: `${BASE}layer2.png`,
+    depth: 0.45,
+    zIndex: 4,
+    desktop: {
+      backgroundSize: 'auto 25%',
+      backgroundPosition: 'right calc(100% - 13vh)',
+    },
+    mobile: {
+      backgroundSize: 'auto 18%',
+      backgroundPosition: 'right -3% bottom 16vh',
+    },
+  },
+  {
+    src: `${BASE}layer1.png`,
+    depth: 0.65,
+    zIndex: 30,
+    desktop: {
+      backgroundSize: '100% auto',
+      backgroundPosition: 'center calc(100% + 30vh)',
+    },
+    mobile: {
+      backgroundSize: '180% auto',
+      backgroundPosition: 'center bottom -1vh',
+    },
+  },
 ]
 
 function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768)
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  )
+
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)')
-    const handler = (e) => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
+    const onChange = (e) => setIsMobile(e.matches)
+    setIsMobile(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
   }, [])
+
   return isMobile
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max)
 }
 
 export default function Background() {
   const isMobile = useIsMobile()
-  const LAYERS = isMobile ? MOBILE_LAYERS : DESKTOP_LAYERS
 
-  const layerYValues = LAYERS.map(() => useMotionValue(0))
+  // ponytail: all hooks called unconditionally — Rules of Hooks
+  const layerY0 = useMotionValue(0)
+  const layerY1 = useMotionValue(0)
+  const layerY2 = useMotionValue(0)
+  const layerY3 = useMotionValue(0)
+  const layerY4 = useMotionValue(0)
+  const layerY5 = useMotionValue(0)
+  const layerYValues = [layerY0, layerY1, layerY2, layerY3, layerY4, layerY5]
 
-  const layer2X = useMotionValue(window.innerWidth)
-  const layer2XSpring = useSpring(layer2X, { stiffness: 20, damping: 40 })
-  const layer2Opacity = useMotionValue(0)
-  const layer2OpacitySpring = useSpring(layer2Opacity, { stiffness: 100, damping: 30 })
+  const layer2X = useMotionValue(typeof window !== 'undefined' ? Math.min(window.innerWidth * (isMobile ? 0.35 : 1), 420) : 0)
+  const layer2XSpring = useSpring(layer2X, { stiffness: 10, damping: 20 })
+  const layer2Opacity = useMotionValue(isMobile ? 1 : 0)
+  const layer2OpacitySpring = useSpring(layer2Opacity, { stiffness: 120, damping: 24 })
+
+  const resolvedLayers = useMemo(() => {
+    return LAYERS.map((layer) => ({
+      ...layer,
+      backgroundSize: isMobile
+        ? (layer.mobile?.backgroundSize ?? layer.desktop.backgroundSize)
+        : layer.desktop.backgroundSize,
+      backgroundPosition: isMobile
+        ? (layer.mobile?.backgroundPosition ?? layer.desktop.backgroundPosition)
+        : layer.desktop.backgroundPosition,
+    }))
+  }, [isMobile])
 
   useEffect(() => {
-    const handleScroll = () => {
-      const topDistance = window.pageYOffset
+    let raf = 0
+
+    const update = () => {
+      const scrollY = window.scrollY || window.pageYOffset
       layerYValues.forEach((yValue, index) => {
-        const depth = LAYERS[index].depth
-        yValue.set(-(topDistance * depth))
+        const baseDepth = resolvedLayers[index].depth
+        const depth = isMobile ? baseDepth * 0.35 : baseDepth
+        const maxOffset = isMobile ? 80 : 220
+        yValue.set(clamp(-(scrollY * depth), -maxOffset, 0))
       })
     }
 
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [layerYValues, LAYERS])
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [isMobile, resolvedLayers, layerYValues])
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (isMobile) {
+      layer2X.set(0)
+      layer2Opacity.set(1)
+      return
+    }
+
+    const timer = window.setTimeout(() => {
       layer2X.set(0)
       layer2Opacity.set(1)
     }, 500)
-    return () => clearTimeout(timer)
-  }, [layer2X, layer2Opacity])
+
+    return () => window.clearTimeout(timer)
+  }, [isMobile, layer2Opacity, layer2X])
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
-      <div className="relative mx-auto h-full w-full max-w-[1900px]">
-        {LAYERS.map((layer, index) => {
+    <div
+      className="fixed inset-0 overflow-hidden pointer-events-none"
+      style={{ height: '100dvh' }}
+    >
+      <div className="relative mx-auto h-full w-full max-w-[1900px] bg-[#130E0A]">
+        {resolvedLayers.map((layer, index) => {
           const isLayer2 = index === 4
+
           return (
             <motion.div
               key={layer.src}
               aria-hidden="true"
-              className="absolute inset-x-0 top-0 h-full bg-no-repeat will-change-transform"
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
               style={{
                 backgroundImage: `url("${layer.src}")`,
                 backgroundSize: layer.backgroundSize,
@@ -90,7 +206,8 @@ export default function Background() {
           )
         })}
       </div>
-      <div className="absolute inset-0 z-5 bg-gradient-to-b from-black/40 via-transparent to-transparent" />
+
+      <div className="absolute inset-0 z-[5] bg-gradient-to-b from-black/40 via-transparent to-transparent" />
     </div>
   )
 }
