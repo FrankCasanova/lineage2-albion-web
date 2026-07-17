@@ -10,7 +10,7 @@ const DESKTOP_LAYERS = [
   { src: `${BASE}layer4.png`, depth: 0.2, backgroundSize: '50% auto', backgroundPosition: 'center bottom', zIndex: 2 },
   { src: `${BASE}layer3.png`, depth: 0.4, backgroundSize: '100% auto', backgroundPosition: 'center calc(100% - 30px)', zIndex: 3 },
   { src: `${BASE}layer2.png`, depth: 0.7, backgroundSize: 'auto 40%', backgroundPosition: 'right calc(100% - 50px)', zIndex: 4 },
-  { src: `${BASE}layer1.png`, depth: 1.0, backgroundSize: '100%', backgroundPosition: 'center calc(100% - -150px)', zIndex: 30 },
+  { src: `${BASE}layer1.png`, depth: 1.0, backgroundSize: '100%', backgroundPosition: 'center calc(100% - -1520px)', zIndex: 30 },
 ]
 
 // ponytail: mobile depths halved for subtler parallax on short viewports
@@ -20,7 +20,7 @@ const MOBILE_LAYERS = [
   { ...DESKTOP_LAYERS[2], depth: 0.1, backgroundSize: '110% auto',backgroundPosition: 'center calc(100% - 200px)' },
   { ...DESKTOP_LAYERS[3], depth: 0.2, backgroundSize: '100% auto',backgroundPosition: 'center calc(100% - 220px)'  },
   { ...DESKTOP_LAYERS[4], depth: 0.35, backgroundSize: '25% auto',backgroundPosition: 'right calc(100% - 245px)' },
-  { ...DESKTOP_LAYERS[5], depth: 0.5, backgroundSize: '100% auto',backgroundPosition: 'center calc(100% - 190px)'  },
+  { ...DESKTOP_LAYERS[5], depth: 0.5, backgroundSize: '100% auto',backgroundPosition: 'center calc(100% - -100px)'  },
 ]
 
 function useIsMobile() {
