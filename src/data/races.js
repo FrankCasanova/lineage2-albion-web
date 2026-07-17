@@ -1,3 +1,51 @@
+export const RACES = [
+  {
+    id: 'human',
+    name: 'Human',
+    tagline: 'Versatile. Balanced. Born to lead.',
+    description:
+      'Humans excel in every path. Stronger parties, better trades, and unmatched versatility make them the backbone of any alliance. Choose a human if you want the most flexible build in Aden.',
+    image: '/placeholder-human.jpg',
+    accent: 'bg-[#E8DCC8]',
+  },
+  {
+    id: 'elf',
+    name: 'Elf',
+    tagline: 'Swift. Graceful. Masters of the bow and magic.',
+    description:
+      'Elves combine deadly ranged precision with arcane mastery. They dominate forests and sieges alike — quick, elegant, and terrifying when focused.',
+    image: '/placeholder-elf.jpg',
+    accent: 'bg-[#C9E4DE]',
+  },
+  {
+    id: 'dark-elf',
+    name: 'Dark Elf',
+    tagline: 'Shadow-walkers. Ruthless. Born from darkness.',
+    description:
+      'Dark Elves trade durability for devastating offense and cursed magic. Their footsteps are silent, their blades poisoned, and their intent unmistakable.',
+    image: '/placeholder-dark-elf.jpg',
+    accent: 'bg-[#3A2F35]',
+  },
+  {
+    id: 'orc',
+    name: 'Orc',
+    tagline: 'Brutal. Unstoppable. Masters of raw power.',
+    description:
+      'Orcs are living siege engines. Higher HP, heavier armor, and berserk fury let them absorb punishment no other race can endure — then answer with overwhelming force.',
+    image: '/placeholder-orc.jpg',
+    accent: 'bg-[#9C7A5C]',
+  },
+  {
+    id: 'dwarf',
+    name: 'Dwarf',
+    tagline: 'Stout. Crafty. Keepers of ancient wealth.',
+    description:
+      'Dwarves are shorter in stature but unmatched in craft and combat resilience. Master smiths, expert miners, and stubborn fighters who never break the line.',
+    image: '/placeholder-dwarf.jpg',
+    accent: 'bg-[#7A6B5D]',
+  },
+]
+
 export const RACE_CLASSES = {
   human: {
     branches: [
