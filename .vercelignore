@@ -5,7 +5,7 @@ public
 .git
 aCis*
 l2-launcher-custom
-updater
+backend_service/updater
 *.bat
 *.md
 opencode.json
