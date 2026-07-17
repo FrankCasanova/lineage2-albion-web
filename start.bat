@@ -23,7 +23,7 @@ timeout /t 2 /nobreak >nul
 
 echo.
 echo Starting Frontend (Vite on :20201)...
-start "L2 Frontend" cmd /k "cd /d "%FE%" && npm run dev -- --port 20201"
+start "L2 Frontend" cmd /k "cd /d "%FE%" && npm run dev -- --port 20201 --host"
 
 echo.
 echo Done.
