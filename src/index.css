@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cream surface scale */
+  --color-paper-50: #faf7f0;
+  --color-paper-100: #f4eee2;
+  --color-paper-200: #e9e0d0;
+  --color-line: #ddd2bf;
+
+  /* Ink — text + dark elements */
+  --color-ink-900: #211c14;
+  --color-ink-700: #5c5343;
+  --color-ink-500: #938871;
+
+  /* Muted gold accent — the Lineage 2 nod */
+  --color-gold-400: #c7a877;
+  --color-gold-500: #b08d57;
+  --color-gold-600: #977441;
+  --color-gold-700: #7d5f33;
+
+  --font-display: "Cinzel", "Palatino Linotype", "Times New Roman", serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-paper-50);
+  background-image: url('/layer6.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  color: var(--color-ink-900);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Primary action — gold fill, ink text */
+  .btn-gold {
+    @apply bg-gold-500 hover:bg-gold-400 text-ink-900 font-bold uppercase tracking-widest transition-colors;
+  }
+
+  /* Secondary action — gold outline on cream */
+  .btn-outline-gold {
+    @apply border border-gold-600 text-gold-600 hover:bg-gold-500/10 hover:border-gold-500 font-bold uppercase tracking-widest transition-colors;
+  }
+
+  /* Content panel — thin gold-edged frame, the L2 touch kept minimal */
+  .panel-l2 {
+    @apply bg-paper-100 border border-line rounded-sm;
+  }
+}
+
+/* Gold-tinted scrollbar to match the palette */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-paper-50);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-700);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-600);
+}

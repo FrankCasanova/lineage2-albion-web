@@ -1,0 +1,14 @@
+node_modules
+dist
+src
+public
+.git
+aCis*
+l2-launcher-custom
+updater
+*.bat
+*.md
+opencode.json
+opencode.jsonc
+.tokensave
+.codebase-memory
