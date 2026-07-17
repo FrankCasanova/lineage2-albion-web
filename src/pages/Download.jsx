@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fadeUp, stagger } from '../lib/motion'
-import { API_BASE } from '../lib/api'
 
 const OPTIONS = [
-  
   {
     title: '1. Download Client',
     description:
@@ -19,9 +17,10 @@ const OPTIONS = [
     title: '2. Download Launcher',
     description:
       'Our lightweight launcher keeps the game patched and up to date automatically. Recommended for most players.',
-    href: API_BASE + '/api/download/launcher',
+    href: 'https://download1472.mediafire.com/hio2za8tmydg20md2OgNsjkVioLHJKNu-7v8jDUZ-Ntktt9ANrk1M6SOcm70sz8801geAAC_DZ_nhigZLWH6ED1W0uhuel4VZ0W4FlduS-noo5qACX9Kk2t2I4h-_kcywOVmLYyqV_6QJIPXCwiHonzIyDYEmWH5t8Sv3wlsE31d/liamo7dnm2ou83u/L2Launcher.exe',
     download: true,
-    external: false,
+    external: true,
+    launcher: true,
     primary: true,
     cta: 'Download Launcher',
   },
@@ -97,7 +96,10 @@ export default function Download() {
             </p>
             {opt.external ? (
               <motion.button
-                onClick={handleDownloadClient}
+                onClick={() => opt.launcher
+                  ? window.open(opt.href, '_blank', 'noopener,noreferrer')
+                  : handleDownloadClient()
+                }
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 className={`inline-block text-center font-bold text-sm uppercase tracking-widest px-10 py-4 transition-colors cursor-pointer ${
