@@ -1,25 +1,27 @@
 import { motion } from 'framer-motion'
 import { fadeUp } from '../lib/motion'
 
-function TierBadge({ tier }) {
+const CLASS_LABELS = ['Base Class', 'First Class', 'Second Class', 'Third Class']
+
+function ClassBadge({ label }) {
   const color =
-    tier === 1
+    label === 'Base Class'
       ? 'bg-ink-500 text-paper-100'
-      : tier === 2
+      : label === 'First Class'
         ? 'bg-gold-500 text-ink-900'
-        : tier === 3
+        : label === 'Second Class'
           ? 'bg-line text-ink-700'
           : 'bg-gold-500/10 text-gold-500 border border-gold-500/30'
 
   return (
     <span className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-sm ${color}`}>
-      Tier {tier}
+      {label}
     </span>
   )
 }
 
 export default function ClassNode({ node, accent, depth = 0 }) {
-  const tier = depth + 1
+  const label = CLASS_LABELS[depth] || `Class ${depth + 1}`
   const hasChildren = node.children && node.children.length > 0
 
   return (
@@ -44,7 +46,7 @@ export default function ClassNode({ node, accent, depth = 0 }) {
               <h3 className="font-display text-lg font-bold text-ink-900 uppercase tracking-wide truncate">
                 {node.name}
               </h3>
-              <TierBadge tier={tier} />
+              <ClassBadge label={label} />
             </div>
             <p className="text-ink-500 text-sm leading-relaxed">
               {node.description}
