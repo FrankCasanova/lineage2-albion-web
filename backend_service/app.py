@@ -752,11 +752,32 @@ async def delete_item(object_id: int, _: int = Depends(require_admin)):
     return {"message": "Item removed"}
 
 
+@app.get("/api/health_check")
+async def health_check():
+    try:
+        con = get_db()
+        cur = con.cursor()
+        cur.execute("SELECT 1")
+        cur.fetchone()
+        con.close()
+        db_ok = True
+    except Exception:
+        db_ok = False
+
+    alive = False
+    try:
+        s = socket.create_connection((GS_HOST, GS_PORT), timeout=1)
+        s.close()
+        alive = True
+    except (socket.timeout, ConnectionRefusedError, OSError):
+        pass
+
+    return {"status": "ok", "database": db_ok, "game_server": alive}
+
+
 from updater import router as updater_router
-from downloads import router as downloads_router
 
 app.include_router(updater_router)
-app.include_router(downloads_router)
 
 
 if __name__ == "__main__":
