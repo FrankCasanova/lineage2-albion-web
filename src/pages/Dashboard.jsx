@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
-import { fadeUp, stagger, transition } from '../lib/motion'
+import { fadeUp, stagger, scaleIn, transition } from '../lib/motion'
 import { API_BASE } from '../lib/api'
+import { useTranslation } from 'react-i18next'
 
 export default function Dashboard() {
+  const { t } = useTranslation()
   const [chars, setChars] = useState([])
   const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -61,12 +63,12 @@ export default function Dashboard() {
         toast.error(data.detail)
         return
       }
-      toast.success('Password changed')
+      toast.success(t('auth.passwordChanged'))
       setShowPwForm(false)
       setOldPw('')
       setNewPw('')
     } catch {
-      toast.error('Connection error')
+      toast.error(t('auth.connectionError'))
     } finally {
       setPwLoading(false)
     }
@@ -75,7 +77,7 @@ export default function Dashboard() {
   const handleCreateAccount = async (e) => {
     e.preventDefault()
     if (acctPw !== acctConfirm) {
-      toast.error('Passwords do not match')
+      toast.error(t('auth.passwordMismatch'))
       return
     }
     setAcctLoading(true)
@@ -90,21 +92,21 @@ export default function Dashboard() {
         toast.error(data.detail)
         return
       }
-      toast.success('Game account created')
+      toast.success(t('auth.gameAccountCreated'))
       setShowAcctForm(false)
       setAcctLogin('')
       setAcctPw('')
       setAcctConfirm('')
       loadAll()
     } catch {
-      toast.error('Connection error')
+      toast.error(t('auth.connectionError'))
     } finally {
       setAcctLoading(false)
     }
   }
 
   const handleDelete = async (login) => {
-    if (!window.confirm('Delete game account "' + login + '"? Its characters will be lost.')) return
+    if (!window.confirm(t('auth.deleteAccountConfirm', { login }))) return
     try {
       const res = await fetch(API_BASE + '/api/game-accounts/' + login, {
         method: 'DELETE',
@@ -115,17 +117,17 @@ export default function Dashboard() {
         toast.error(data.detail)
         return
       }
-      toast.success('Game account deleted')
+      toast.success(t('auth.gameAccountDeleted'))
       loadAll()
     } catch {
-      toast.error('Connection error')
+      toast.error(t('auth.connectionError'))
     }
   }
 
   if (loading) {
     return (
       <section className="min-h-[60vh] flex items-center justify-center">
-        <p className="text-ink-500 text-sm uppercase tracking-widest">Loading...</p>
+        <p className="text-ink-500 text-sm uppercase tracking-widest">{t('common.loading')}</p>
       </section>
     )
   }
@@ -145,20 +147,20 @@ export default function Dashboard() {
         animate="show"
       >
         <h1 className="font-display text-3xl font-bold text-ink-900 uppercase tracking-wide">
-          My Account
+          {t('auth.dashboard.title')}
         </h1>
         <div className="flex gap-2">
           <button
             onClick={() => { setShowAcctForm(!showAcctForm); setShowPwForm(false) }}
             className="btn-outline-gold text-xs font-bold uppercase tracking-widest px-4 py-2 transition-colors"
           >
-            {showAcctForm ? 'Cancel' : accounts.length ? 'Replace Game Account' : 'Create Game Account'}
+            {showAcctForm ? t('auth.cancel') : accounts.length ? t('auth.replaceAccount') : t('auth.createGameAccount')}
           </button>
           <button
             onClick={() => { setShowPwForm(!showPwForm); setShowAcctForm(false) }}
             className="btn-outline-gold text-xs font-bold uppercase tracking-widest px-4 py-2 transition-colors"
           >
-            {showPwForm ? 'Cancel' : 'Change Password'}
+            {showPwForm ? t('auth.cancel') : t('auth.changePassword')}
           </button>
         </div>
       </motion.div>
@@ -172,7 +174,7 @@ export default function Dashboard() {
           exit={{ opacity: 0, y: -12 }}
         >
           <div>
-            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">Current Password</label>
+            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">{t('auth.currentPassword')}</label>
             <input
               type="password"
               value={oldPw}
@@ -182,7 +184,7 @@ export default function Dashboard() {
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">New Password</label>
+            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">{t('auth.newPassword')}</label>
             <input
               type="password"
               value={newPw}
@@ -197,7 +199,7 @@ export default function Dashboard() {
             disabled={pwLoading}
             className="bg-gold-500 hover:bg-gold-600 disabled:opacity-50 text-ink-900 text-xs font-bold uppercase tracking-widest px-6 py-2 transition-colors"
           >
-            {pwLoading ? 'Saving...' : 'Save'}
+            {pwLoading ? t('auth.saving') : t('auth.save')}
           </button>
         </motion.form>
       )}
@@ -212,11 +214,11 @@ export default function Dashboard() {
         >
           {accounts.length > 0 && (
             <p className="text-gold-500 text-xs uppercase tracking-wider">
-              You already own a game account. Creating a new one will delete it permanently.
+              {t('auth.replaceAccountDescription')}
             </p>
           )}
           <div>
-            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">Game Username</label>
+            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">{t('auth.gameUsername')}</label>
             <input
               type="text"
               value={acctLogin}
@@ -227,7 +229,7 @@ export default function Dashboard() {
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">Password</label>
+            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">{t('auth.currentPassword')}</label>
             <input
               type="password"
               value={acctPw}
@@ -238,7 +240,7 @@ export default function Dashboard() {
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">Confirm Password</label>
+            <label className="block text-xs font-bold text-ink-700 uppercase tracking-wider mb-1">{t('auth.confirmPassword')}</label>
             <input
               type="password"
               value={acctConfirm}
@@ -252,22 +254,22 @@ export default function Dashboard() {
             disabled={acctLoading}
             className="bg-gold-500 hover:bg-gold-600 disabled:opacity-50 text-ink-900 text-xs font-bold uppercase tracking-widest px-6 py-2 transition-colors"
           >
-            {acctLoading ? 'Creating...' : 'Create'}
+            {acctLoading ? t('auth.creating') : t('auth.createGameAccount')}
           </button>
         </motion.form>
       )}
 
-      <h2 className="font-display text-xl font-bold text-ink-900 uppercase tracking-wide mb-4">Game Accounts</h2>
+      <h2 className="font-display text-xl font-bold text-ink-900 uppercase tracking-wide mb-4">{t('auth.dashboard.gameAccounts')}</h2>
       {accounts.length === 0 ? (
-        <p className="text-ink-500 mb-8">No game account yet. Create one to play.</p>
+        <p className="text-ink-500 mb-8">{t('auth.dashboard.noGameAccountYet')}</p>
       ) : (
         <div className="overflow-x-auto mb-8">
           <table className="w-full text-sm">
             <thead>
                 <tr className="border-b border-line">
-                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">Username</th>
-                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">Last Active</th>
-                <th className="text-right text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">Action</th>
+                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.table.username')}</th>
+                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.table.lastActive')}</th>
+                <th className="text-right text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.table.action')}</th>
               </tr>
             </thead>
             <motion.tbody variants={stagger} initial="hidden" animate="show">
@@ -282,7 +284,7 @@ export default function Dashboard() {
                       onClick={() => handleDelete(a.login)}
                       className="text-red-400 hover:text-red-300 text-xs font-bold uppercase tracking-widest"
                     >
-                      Delete
+                      {t('auth.delete')}
                     </button>
                   </td>
                 </motion.tr>
@@ -292,20 +294,20 @@ export default function Dashboard() {
         </div>
       )}
 
-      <h2 className="font-display text-xl font-bold text-ink-900 uppercase tracking-wide mb-4">Characters</h2>
+      <h2 className="font-display text-xl font-bold text-ink-900 uppercase tracking-wide mb-4">{t('auth.dashboard.characters')}</h2>
       {chars.length === 0 ? (
-        <p className="text-ink-500">No characters found on your game account.</p>
+        <p className="text-ink-500">{t('auth.dashboard.noCharactersFound')}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
                 <tr className="border-b border-line">
-                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">Name</th>
-                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">Level</th>
-                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">Class</th>
-                <th className="text-center text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">PvP</th>
-                <th className="text-center text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">PK</th>
-                <th className="text-center text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">Status</th>
+                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.dashboard.name')}</th>
+                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.dashboard.level')}</th>
+                <th className="text-left text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.dashboard.class')}</th>
+                <th className="text-center text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.dashboard.pvp')}</th>
+                <th className="text-center text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.dashboard.pk')}</th>
+                <th className="text-center text-xs font-bold text-ink-500 uppercase tracking-wider py-3 px-4">{t('auth.dashboard.status')}</th>
               </tr>
             </thead>
             <motion.tbody variants={stagger} initial="hidden" animate="show">
@@ -318,9 +320,9 @@ export default function Dashboard() {
                   <td className="py-3 px-4 text-center text-red-400">{c.pk_kills}</td>
                   <td className="py-3 px-4 text-center">
                     {c.online ? (
-                      <span className="text-green-400 font-bold text-xs uppercase">Online</span>
+                      <span className="text-green-400 font-bold text-xs uppercase">{t('auth.dashboard.online')}</span>
                     ) : (
-                      <span className="text-ink-500 text-xs uppercase">Offline</span>
+                      <span className="text-ink-500 text-xs uppercase">{t('auth.dashboard.offline')}</span>
                     )}
                   </td>
                 </motion.tr>
